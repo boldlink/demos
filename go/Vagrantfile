@@ -1,0 +1,36 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+vms = {
+  "appServer1" => { :ip => "192.168.33.11", :cpus => 1, :mem => 384, :script => "scripts/app.sh" },
+  "appServer2" => { :ip => "192.168.33.12", :cpus => 1, :mem => 384, :script => "scripts/app.sh" },
+  "webServer1" => { :ip => "192.168.33.10", :cpus => 1, :mem => 384, :script => "scripts/lb.sh", :nic => "en0: Wi-Fi (AirPort)", :host => 8484, :guest => 8484 }
+}
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  vms.each_with_index do |(hostname, info), index|
+
+    config.vm.define hostname do |cfg|
+      cfg.vm.provider :virtualbox do |vb, override|
+        config.vm.box = "bento/ubuntu-17.04"
+        override.vm.network :private_network, ip: "#{info[:ip]}"
+    if hostname == "webServer1"
+        $host = "#{info[:host]}"
+        $guest = "#{info[:guest]}"
+        override.vm.network "public_network", bridge: "#{info[:nic]}"
+        override.vm.network "forwarded_port", guest: $guest, host: $host
+    end # end case
+        override.vm.hostname = hostname
+        override.vm.provision "shell", path: "#{info[:script]}", run: 'always'
+        vb.name = hostname
+        vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on"] 
+      end # end provider
+
+    
+    end # end config
+
+  end # end cluster
+end
