@@ -1,0 +1,31 @@
+---
+dependencies: []
+
+galaxy_info:
+  author: Hugo Almeida
+  description: Jenkins 2.x.x
+  company: "Boldlink - SIG"
+  license: "license (BSD, MIT)"
+  min_ansible_version: 2.4
+  platforms:
+    # - name: EL
+    #   versions:
+    #   - 6
+    #   - 7
+    # - name: Fedora
+    #   versions:
+    #   - all
+    # - name: Debian
+    #   versions:
+    #   - all
+    - name: Ubuntu
+      versions:
+      - 16.04
+    - name: CentOS
+      versions:
+      - 7.4
+  galaxy_tags:
+    - development
+    - ci::cd
+    - system
+    - web

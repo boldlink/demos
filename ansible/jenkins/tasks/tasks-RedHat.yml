@@ -1,0 +1,57 @@
+---
+# RedHat/CentOS specific tasks
+
+- name: Centos/RHEL = Install docker ce extra packages
+  yum: name={{item}} state=present
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2
+
+- name: Centos/RHEL = Add Docker GPG key.
+  rpm_key:
+    key: https://download.docker.com/linux/centos/gpg
+    state: present
+
+- name: Centos/RHEL = Add Jenkins key.
+  rpm_key:
+    key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+    state: present
+
+- name: Centos/RHEL = Add Docker repository.
+  get_url:
+    url: "https://download.docker.com/linux/centos/docker-ce.repo"
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Centos/RHEL = Add Jenkins repository.
+  get_url:
+    url: "https://pkg.jenkins.io/redhat-stable/jenkins.repo"
+    dest: '/etc/yum.repos.d/jenkins.repo'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Centos/RHEL = Check if JDK 8 is already installed
+  shell: rpm -q jdk1.8-1.8.0_161-fcs.x86_64
+  register: cr_jdk_check
+  ignore_errors: true
+  failed_when: no
+  changed_when: no
+
+- name: Centos/RHEL = Install Oracle JDK 8u161
+  become: true
+  shell: | 
+    cd ~
+    wget --no-cookies --no-check-certificate --header "Cookie: gpw_e24=http%3A%2F%2Fwww.oracle.com%2F; oraclelicense=accept-securebackup-cookie" "http://download.oracle.com/otn-pub/java/jdk/8u161-b12/2f38c3b165be4555a1fa6e98c45e0808/jdk-8u161-linux-x64.rpm"
+    yum localinstall -y $HOME/jdk-8u161-linux-x64.rpm
+    rm -rf $HOME/jdk-8u161-linux-x64.rpm
+    echo "export JAVA_HOME="/usr/java/jdk1.8.0_161/"" >> /etc/profile
+  when: cr_jdk_check.rc == 1
+
+- name: Centos/RHEL = Install Jenkins
+  yum: name=jenkins state=present update_cache=yes
+
+

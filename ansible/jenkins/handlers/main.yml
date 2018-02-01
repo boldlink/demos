@@ -1,0 +1,14 @@
+---
+# handlers file for jenkins
+
+- name: Update D/U cache
+  become: true
+  apt:
+    upgrade: no
+    update_cache: yes
+
+- name: Update C/R cache
+  become: true
+  yum:
+    upgrade: no
+    update_cache: yes
