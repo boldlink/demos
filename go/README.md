@@ -54,7 +54,7 @@ Contents structure:
 
 
 
-Vagrant code is (almoust) immutable, you should only relly have to edit these settings:
+Vagrant code is (almoust) immutable, you should only really have to edit these settings:
 
 * **vms = {}**
 
