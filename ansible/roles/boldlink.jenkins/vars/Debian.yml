@@ -1,0 +1,5 @@
+---
+# Debian specific vars
+
+path:
+  jenkins_init: /etc/default/jenkins

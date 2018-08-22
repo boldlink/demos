@@ -1,0 +1,5 @@
+---
+# Debian specific vars
+path:
+  awscli: "/usr/local/bin/aws"
+

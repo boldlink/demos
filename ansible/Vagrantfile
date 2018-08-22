@@ -12,42 +12,54 @@
 VAGRANTFILE_API_VERSION = "2"
 
 vms = {
-    "ubuntu-jenkins" => { 
+        "control" => { 
+        :box => "bento/ubuntu-17.10",
+        :hostname => "control",
+        :ip => "192.168.33.10",
+        :cpus => 1, 
+        :mem => 768, 
+        :script => "control.sh", 
+        :nic => "en0: Wi-Fi (AirPort)",
+        # :sshp => 2321
+        :phost => 8084, 
+        :pguest => 8080 
+    },
+    "ujenkins" => { 
         :box => "bento/ubuntu-16.04",
         :hostname => "ujenkins",
         :ip => "192.168.33.11",
         :cpus => 1, 
         :mem => 768, 
-        # :script => "node.sh", 
-        # :nic => "en0: Wi-Fi (AirPort)",
+        :script => "node.sh", 
+        :nic => "en0: Wi-Fi (AirPort)",
         # :sshp => 2321, 
         :phost => 8081, 
         :pguest => 8080 
     },
-  "centosjenkins" => { 
+  "cjenkins" => { 
         :box => "bento/centos-7.4",
         :host => "cjenkins",
         :ip => "192.168.33.12",
         :cpus => 1, 
         :mem => 768, 
-        # :script => "node.sh", 
-        # :nic => "en0: Wi-Fi (AirPort)",
+        :script => "node.sh", 
+        :nic => "en0: Wi-Fi (AirPort)",
         # :sshp => 2322,
         :phost => 8082, 
         :pguest => 8080 
-    }
-  # "djenkins" => { 
-  #       :box => "bento/debian-8.7",
-  #       :host => "cjenkins",
-  #       :ip => "192.168.33.113",
-  #       :cpus => 1, 
-  #       :mem => 768, 
-  #       :script => "node.sh", 
-  #       :nic => "en0: Wi-Fi (AirPort)",
-  #       :sshp => 2323,
-  #       :phost => 8083, 
-  #       :pguest => 8080 
-  #   }
+    },
+   "ajenkins" => { 
+         :box => "mvbcoding/awslinux",
+         :host => "cjenkins",
+         :ip => "192.168.33.13",
+         :cpus => 1, 
+         :mem => 768, 
+         :script => "node.sh", 
+         :nic => "en0: Wi-Fi (AirPort)",
+         # :sshp => 2323,
+         :phost => 8083, 
+         :pguest => 8080 
+     }
 }
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
@@ -55,7 +67,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   vms.each_with_index do |(hostname, info), index|
     config.hostmanager.enabled = true
     config.vbguest.no_install = true 
-    config.vm.synced_folder "./../", "/vagrant"
+    config.vm.synced_folder "./", "/vagrant"
     config.vm.synced_folder "/shrlocal/", "/shrlocal/"
     config.vm.define hostname do |cfg|
       cfg.vm.provider :virtualbox do |vb, override|
@@ -69,7 +81,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         # override.vm.network "forwarded_port", guest: "22", host: $pssh
         # override.ssh.port = $sshp
         override.vm.hostname = hostname
-        # override.vm.provision "shell", path: "#{info[:script]}"
+        override.vm.provision "shell", path: "#{info[:script]}"
         vb.name = hostname
         vb.customize ["modifyvm", :id, "--memory", info[:mem], "--cpus", info[:cpus], "--hwvirtex", "on"] 
       end # end provider

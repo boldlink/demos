@@ -1,0 +1,30 @@
+---
+# tasks file for openjdk8
+
+- name: Amazon = Check for openjdk7 state
+  become: true
+  shell: | 
+    rpm -qa | grep java-1.7.0
+  register: old_java
+  notify: uninstall_openjdk7
+  ignore_errors: true
+  failed_when: no
+  when: ansible_distribution == 'Amazon'
+
+- meta: flush_handlers
+
+- name: Load Amz Vars
+  include_vars: "amz.yml"
+  when: ansible_distribution == 'Amazon'
+
+- name: Load RedHat Vars
+  include_vars: "redhat.yml"
+  when: ansible_os_family == 'RedHat'
+
+- name: Load Debian Vars
+  include_vars: "debian.yml"
+  when: ansible_os_family == 'Debian'
+
+- name: Install OpenJDK8
+  action: >
+    {{ ansible_pkg_mgr }} name={{ java_package }} state=latest update_cache=yes

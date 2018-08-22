@@ -1,0 +1,10 @@
+---
+# handlers file for jenkins
+
+- name: Execute jenkins Admin creation
+  service: name=jenkins state=restarted
+  notify: restart jenkins
+
+- name: restart jenkins
+  service: name=jenkins state=restarted
+

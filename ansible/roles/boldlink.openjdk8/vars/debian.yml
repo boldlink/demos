@@ -1,0 +1,4 @@
+---
+# vars file for openjdk8
+
+java_package: openjdk-8-jdk

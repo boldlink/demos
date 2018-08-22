@@ -1,0 +1,22 @@
+---
+# CentOS specific tasks for docker-ce
+
+- name: Centos/RHEL = Add Docker GPG key.
+  rpm_key:
+    key: https://download.docker.com/linux/centos/gpg
+    state: present
+
+- name: Centos/RHEL = Add Docker repository.
+  get_url:
+    url: "https://download.docker.com/linux/centos/docker-ce.repo"
+    dest: '/etc/yum.repos.d/docker-ce.repo'
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Centos/RHEL = Install docker ce extra packages
+  yum: name={{item}} state=present
+  with_items:
+    - yum-utils
+    - device-mapper-persistent-data
+    - lvm2

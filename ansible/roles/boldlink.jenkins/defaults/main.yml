@@ -1,0 +1,46 @@
+---
+# defaults for config of for jenkins
+
+# Jenkins init
+jenkins_name: jenkins
+jenkins_home: /var/lib/jenkins
+jenkins_java_cmd: ""
+jenkins_user: jenkins
+jenkins_group: jenkins
+jenkins_java_options: '"-Djenkins.install.runSetupWizard=false"'
+jenkins_http_port: 8080
+jenkins_listen_address: ""
+
+jenkins_init_changes:
+  - name: "NAME"
+    value: "{{ jenkins_name }}"
+  - name: "JENKINS_HOME"
+    value: "{{ jenkins_home }}"
+  - name: "HTTP_PORT"
+    value: "{{ jenkins_http_port }}"
+  - name: "JAVA_ARGS"
+    value: "{{ jenkins_java_options }}"
+
+# Jenkins config
+jenkins_admin_username: admin
+# jenkins_admin_password: "{{ vault_jenkins_pwd }}"
+jenkins_admin_password: admin
+
+jenkins_package_state: present
+
+jenkins_plugins: [ github, job-dsl, azure-ad ]
+jenkins_plugins_state: present
+jenkins_plugin_timeout: 10
+jenkins_plugin_updates_expiration: 10
+
+jenkins_admin_password_file: ""
+jenkins_admin_token: ""
+jenkins_admin_token_file: ""
+
+jenkins_hostname: localhost
+
+jenkins_jar_location: /opt/jenkins-cli.jar
+jenkins_url_prefix: ""
+
+# jenkins_connection_retries: 5
+# jenkins_connection_delay: 10

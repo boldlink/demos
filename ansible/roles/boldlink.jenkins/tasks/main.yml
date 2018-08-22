@@ -1,0 +1,83 @@
+---
+# tasks file for jenkins
+
+# - name: Check if you are installing on APT system
+#   fail: msg="This role only supports Ubuntu or RHEL/CentOS for now"
+#   when: (ansible_distribution_file_variety != "Debian") or
+#         (ansible_distribution_file_variety != 'RedHat')
+
+- name: Load OS specific environment variable files
+  include_vars: "Debian.yml"
+  when: ansible_os_family == 'Debian'
+
+- name: Load OS specific environment variable files
+  include_vars: "RedHat.yml"
+  when: ansible_os_family == 'RedHat'
+
+- name: install basic packages
+  action: >
+    {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+  with_items:
+    - git
+    - vim
+    - python
+    - python-setuptools
+
+- name: Add jenkins group
+  group:
+    name: "jenkins"
+    state: present
+
+- name: Add Jenkins user
+  user:
+    name: jenkins
+    shell: /bin/bash
+    groups: jenkins
+    append: yes
+
+- include: "Debian.yml"
+  static: no
+  when: ansible_os_family == 'Debian'
+
+- include: "RedHat.yml"
+  static: no
+  when: ansible_os_family == 'RedHat' 
+
+- name: Ensure Jenkins is running
+  systemd: state=started name="jenkins"
+  when: (ansible_os_family == "RedHat" and ansible_distribution == "CentOS") or 
+      (ansible_os_family == "Ubuntu" and ansible_distribution == "Ubuntu")
+
+- name: Make sure Jenkins is running Amazon
+  service: state=started name="jenkins"
+  ignore_errors: true
+  when: ansible_distribution == "Amazon"
+
+- name: Check if docker is installed
+  shell: which docker
+  register: which_docker
+  changed_when: false
+
+- name: Add Jenkins user to docker group
+  user:
+    name: jenkins
+    groups: docker
+    append: yes
+  when: which_docker.rc != -1
+
+- meta: flush_handlers
+
+- include: setup.yml
+  static: no
+
+- meta: flush_handlers
+
+- include: user.yml
+  static: no
+
+# - meta: flush_handlers
+
+# - import_tasks: plugins.yml
+#   static: no
+
+# - meta: flush_handlers

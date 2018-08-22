@@ -1,5 +1,0 @@
----
-# RedHat/CentOS specific vars
-
-path:
-  awscli: "/usr/bin/aws"

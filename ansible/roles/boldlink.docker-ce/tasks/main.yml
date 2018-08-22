@@ -1,0 +1,58 @@
+---
+# tasks file for docker
+
+- name: Add Addtional Groups
+  group:
+    name: "docker"
+    state: present
+  with_items:
+    - docker
+
+- name: Check if vagrant user exists     
+  stat: path=/home/vagrant
+  register: vagrant
+
+- name: Docker permissions for Vagrant
+  user:
+    name: vagrant
+    shell: /bin/bash
+    groups: docker
+    append: yes
+  when: vagrant.stat.exists
+
+- include: "RedHat.yml"
+  static: no
+  when: (ansible_os_family == "RedHat" and ansible_distribution == "CentOS")
+
+
+- include: "Debian.yml"
+  static: no
+  when: (ansible_os_family == "Debian" and ansible_distribution == "Ubuntu")
+
+
+- name: Install Docker CE
+  action: >
+    {{ ansible_pkg_mgr }} name=docker-ce state=present update_cache=yes
+  when: (ansible_os_family == "RedHat" and ansible_distribution == "CentOS") or 
+        (ansible_os_family == "Debian" and ansible_distribution == "Ubuntu")
+
+- name: Install Docker CE Amazon
+  action: >
+    {{ ansible_pkg_mgr }} name=docker state=present update_cache=yes
+  when: ansible_distribution == "Amazon"
+
+- name: Make sure Docker is running
+  systemd: state=started name="docker"
+  ignore_errors: true
+  when: (ansible_os_family == "RedHat" and ansible_distribution == "CentOS") or 
+        (ansible_os_family == "Ubuntu" and ansible_distribution == "Ubuntu")
+
+- name: Make sure Docker is running Amazon
+  service: state=started name="docker"
+  ignore_errors: true
+  when: ansible_distribution == "Amazon"
+
+- name: Install docker-compose
+  pip:
+    name: docker-compose
+    state: latest

@@ -1,0 +1,19 @@
+---
+# RedHat/CentOS specific tasks
+
+- name: Ubuntu = Add Jenkins Repo Key
+  apt_key:
+    url: https://pkg.jenkins.io/debian/jenkins.io.key
+    state: present
+
+- name: Ubuntu = Add Jenkins Repo
+  apt_repository:
+    repo: deb http://pkg.jenkins.io/debian-stable binary/
+    state: present
+
+- name: Ubuntu = Install Jenkins
+  apt: name=jenkins state=present update_cache=yes
+  register: ujenkins_install
+
+
+

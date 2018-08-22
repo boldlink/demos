@@ -1,0 +1,16 @@
+---
+# tasks file for awscli
+
+- name: install basic packages
+  action: >
+    {{ ansible_pkg_mgr }} name={{ item }} state=present update_cache=yes
+  with_items:
+    - git
+    - vim
+    - python
+    - python-setuptools
+
+- include: CentOS_Ubuntu.yml
+  # static: no
+  when: (ansible_os_family == "RedHat" and ansible_distribution == "CentOS") or 
+        (ansible_os_family == "Debian" and ansible_distribution == "Ubuntu")

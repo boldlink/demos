@@ -1,0 +1,21 @@
+---
+# Debian/Ubuntu specific tasks for docker-ce
+
+- name: Ubuntu = Add Docker Repo Key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    state: present
+
+- name: Ubuntu = Add Docker CE repo
+  apt_repository:
+    repo: deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable
+
+- name: Ubuntu = Install Debian/Ubuntu Docker Reqirements
+  apt: name={{item}} state=present update_cache=yes
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - curl
+    - gnupg2
+    - software-properties-common
+  

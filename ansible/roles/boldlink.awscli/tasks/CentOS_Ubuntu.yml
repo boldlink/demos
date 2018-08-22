@@ -1,0 +1,18 @@
+---
+- name: Load a variable file based on the OS Family type.
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Install pip
+  easy_install:
+    name: pip
+    state: latest
+
+- name: Install awscli
+  pip:
+    name: awscli
+    state: latest
+
+- name: Enable execute on awscli
+  file:
+    path: "{{ path.awscli }}"
+    mode: "u=rx,g=rx,o=rwx"

@@ -1,0 +1,6 @@
+---
+# handlers file for openjdk8
+
+- name: uninstall_openjdk7
+  action: >
+    {{ ansible_pkg_mgr }} name=java-1.7.0-openjdk state=absent update_cache=yes

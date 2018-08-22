@@ -1,0 +1,5 @@
+---
+# RedHat/CentOS specific vars
+
+path:
+  jenkins_init: /etc/sysconfig/jenkins
