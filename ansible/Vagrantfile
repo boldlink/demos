@@ -68,7 +68,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     config.hostmanager.enabled = true
     config.vbguest.no_install = true 
     config.vm.synced_folder "./", "/vagrant"
-    config.vm.synced_folder "/shrlocal/", "/shrlocal/"
     config.vm.define hostname do |cfg|
       cfg.vm.provider :virtualbox do |vb, override|
         config.vm.box = "#{info[:box]}"
